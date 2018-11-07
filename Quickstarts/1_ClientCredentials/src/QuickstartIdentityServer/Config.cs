@@ -13,7 +13,26 @@ namespace QuickstartIdentityServer
         {
             return new List<ApiResource>
             {
-                new ApiResource("api1", "My API")
+                //new ApiResource("api1", "My API")
+                new ApiResource()
+                {
+                    Name = "api1",
+                    DisplayName = "My new api",
+
+                    Scopes =
+                    {
+                        new Scope()
+                        {
+                            Name = "books",
+                            DisplayName = "full access to books api"
+                        },
+                        new Scope()
+                        {
+                            Name = "api1",
+                            DisplayName = "entire api?"
+                        }
+                    }
+                }
             };
         }
 
@@ -33,6 +52,18 @@ namespace QuickstartIdentityServer
                         new Secret("secret".Sha256())
                     },
                     AllowedScopes = { "api1" }
+                },
+                new Client()
+                {
+                    ClientId = "booksClient",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+
+                    ClientSecrets =
+                    {
+                        new Secret("booksSecret".Sha256())
+                    },
+                    AllowedScopes = { "api1", "books" }
+                    
                 }
             };
         }

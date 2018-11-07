@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args) => MainAsync().GetAwaiter().GetResult();
         
@@ -24,8 +24,8 @@ namespace Client
             }
 
             // request token
-            var tokenClient = new TokenClient(disco.TokenEndpoint, "client", "secret");
-            var tokenResponse = await tokenClient.RequestClientCredentialsAsync("api1");
+            var tokenClient = new TokenClient(disco.TokenEndpoint, "booksClient", "booksSecret");
+            var tokenResponse = await tokenClient.RequestClientCredentialsAsync();
 
             if (tokenResponse.IsError)
             {
@@ -40,7 +40,19 @@ namespace Client
             var client = new HttpClient();
             client.SetBearerToken(tokenResponse.AccessToken);
 
+            //var response = await client.GetAsync("http://localhost:5001/identity");
             var response = await client.GetAsync("http://localhost:5001/identity");
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+            }
+            else
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(JArray.Parse(content));
+            }
+
+            response = await client.GetAsync("http://localhost:5001/api/book");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
